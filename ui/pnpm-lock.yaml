@@ -11,6 +11,9 @@ importers:
       '@lichess-org/chessground':
         specifier: ^10.1.1
         version: 10.1.1
+      '@solidjs/router':
+        specifier: ^0.16.1
+        version: 0.16.1(solid-js@1.9.12)
       '@tailwindcss/vite':
         specifier: ^4.2.4
         version: 4.2.4(vite@8.0.10(@types/node@24.12.2)(jiti@2.6.1))
@@ -252,6 +255,11 @@ packages:
 
   '@rolldown/pluginutils@1.0.0-rc.17':
     resolution: {integrity: sha512-n8iosDOt6Ig1UhJ2AYqoIhHWh/isz0xpicHTzpKBeotdVsTEcxsSA/i3EVM7gQAj0rU27OLAxCjzlj15IWY7bg==}
+
+  '@solidjs/router@0.16.1':
+    resolution: {integrity: sha512-IhyjedgC6LRpw/8CPGGI89FrV+r0xTHzOl2c4CRyzYQ1bLepJxbVI1LLKvsavMWY5TRBRacV7hAeOhuTXkjiqg==}
+    peerDependencies:
+      solid-js: ^1.8.6
 
   '@tailwindcss/node@4.2.4':
     resolution: {integrity: sha512-Ai7+yQPxz3ddrDQzFfBKdHEVBg0w3Zl83jnjuwxnZOsnH9pGn93QHQtpU0p/8rYWxvbFZHneni6p1BSLK4DkGA==}
@@ -909,6 +917,10 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.0-rc.17': {}
+
+  '@solidjs/router@0.16.1(solid-js@1.9.12)':
+    dependencies:
+      solid-js: 1.9.12
 
   '@tailwindcss/node@4.2.4':
     dependencies:
