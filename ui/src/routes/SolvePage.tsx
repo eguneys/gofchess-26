@@ -8,12 +8,12 @@ export default function SolvePage() {
 
 
     return (<>
-        <div class='flex gap-1 p-0.5'>
-            <div class='flex-1'>
+        <div class='flex-1 flex gap-1 p-0.5'>
+            <div class='flex flex-1'>
                 <ChessboardGroup />
             </div>
         </div>
-        <div class='flex p-0.5 gap-1'>
+        <div class='flex-1 flex p-0.5 gap-1'>
             <div class='flex-2'>
                 <ChesslineGroup />
             </div>
@@ -84,9 +84,9 @@ export function ChesslineGroup() {
             </div>
             <div class='flex flex-row h-full'>
                 <div class='flex flex-col'>
-                    <h2 onClick={() => set_tab('tp')} class={`${is_selected_tab('tp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>True Positives</h2>
-                    <h2 onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>False Positives</h2>
-                    <h2 onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>Negatives</h2>
+                    <div onClick={() => set_tab('tp')} class={`${is_selected_tab('tp') ? 'bg-indigo-700' : 'bg-slate-500'} select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>True Positives</div> <div>({coverage().Tp})</div></div>
+                    <div onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>False Positives </div><div>({coverage().Fp})</div></div>
+                    <div onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>Negatives </div><div>({coverage().N})</div></div>
                 </div>
                 <div class='flex-1 flex bg-silver-900 h-50'>
                     <div class='flex-1 flex flex-col overflow-auto'>
@@ -114,9 +114,9 @@ export function ChesslineGroup() {
 
 export function ChessboardGroup() {
     return (<>
-        <div class='flex flex-col lg:flex-row gap-0.5'>
-            <div class='flex-8 flex flex-row bg-emerald-500 rounded border border-slate-500 lg:min-h-100 min-h-140'>
-                <div class='flex-1 border-r border-dashed border-slate-100'>
+        <div class='flex-1 flex flex-col lg:flex-row gap-0.5'>
+            <div class='flex-8 flex flex-row bg-emerald-500 rounded border border-slate-500'>
+                <div class='flex flex-1 border-r border-dashed border-slate-100'>
                     <GofEditor/>
                 </div>
                 <div class='flex-1'>

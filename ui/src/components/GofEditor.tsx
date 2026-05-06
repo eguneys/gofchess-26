@@ -33,7 +33,10 @@ export default function GofEditor(props: { content?: string }) {
     onMount(() => {
         let editor = monaco.editor.create($el, {
             value: props.content ?? '',
-            minimap: {enabled: false }
+            minimap: {enabled: false },
+            lineDecorationsWidth: 1,
+            lineNumbersMinChars: 3,
+            automaticLayout: true
         })
 
         let vimMode: VimAdapterInstance
@@ -97,8 +100,6 @@ export default function GofEditor(props: { content?: string }) {
             console.log('pass')
         })
 
-
-
         onCleanup(() => {
             editor.dispose()
             vimMode.dispose()
@@ -109,7 +110,7 @@ export default function GofEditor(props: { content?: string }) {
     let $status!: HTMLDivElement
 
     return (<>
-    <div class='flex flex-col h-full'>
+    <div class='flex-1 flex flex-col'>
             <div ref={$el} class='flex-1'>
             </div>
             <div ref={$status}></div>
