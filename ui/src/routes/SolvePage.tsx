@@ -1,5 +1,5 @@
 import { Chessboard } from "../components/Chessboard";
-import { For } from "solid-js";
+import { createMemo, createSelector, createSignal, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 import GofEditor from "../components/GofEditor";
 import GofEditorOutput from "../components/GofEditorOutput";
@@ -24,28 +24,74 @@ export default function SolvePage() {
     </>)
 }
 
+type Tab = 'tp' | 'fp' | 'ne'
 export function ChesslineGroup() {
-    const list = 'aslkdfjlskadjlksadjflksdajlfkjadslfdsla'.split('')
+
+    const list = 'aslkdfjlskadjlksadjflksdajlfkjadslfdsla'.split('').map(_ => ({
+        id: _
+    }))
+
     const tags = ['mateIn1', 'backrankMate', 'advanced', 'long', 'short', 'medium']
+
+    const [tab, set_tab] = createSignal<Tab>('tp')
+
+    const is_selected_tab = createSelector(tab)
+
+    const coverage = createMemo(() => ({
+        percent: 50,
+        accuracy: 100,
+        Tp: 1,
+        Fp: 1000,
+        N: 10000,
+        Total: 10000
+    }))
+
+    const running_times = createMemo(() => ({
+        per_puzzle_ms: 1,
+        total_seconds: 10
+    }))
+
+    const selected_puzzle_id = createMemo(() => 'a')
+
+    const is_selected_puzzle = createSelector(selected_puzzle_id)
+
     return (<>
         <div class='flex flex-col bg-silver-900 rounded border border-slate-500 h-full'>
             <div class='flex justify-around leading-3'>
-                <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Coverage: %100</span>
-                <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Accuracy: %100</span>
-                <span class='text-center text-nowrap flex-3 p-2 bg-pink-500 text-blue-100'>Tp/Fp: 1/1 N: 99999 Total: 100000</span>
-                <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Time per puzzle: 1ms</span>
-                <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>took 10s</span>
+                <Show when={coverage()} fallback={
+                    <>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Coverage: %---</span>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Accuracy: %---</span>
+                        <span class='text-center text-nowrap flex-3 p-2 bg-pink-500 text-blue-100'>Tp/Fp: --/-- N: -- Total: --</span>
+                    </>
+                }>{ coverage => 
+                    <>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Coverage: %{coverage().percent}</span>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Accuracy: %{coverage().accuracy}</span>
+                        <span class='text-center text-nowrap flex-3 p-2 bg-pink-500 text-blue-100'>Tp/Fp: {coverage().Tp}/{coverage().Fp} N: {coverage().N} Total: {coverage().Total}</span>
+                    </>
+                }</Show>
+
+                <Show when={running_times()} fallback={
+                    <>
+                    </>
+                }>{times =>
+                        <>
+                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Time per puzzle: {times().per_puzzle_ms}ms</span>
+                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>took {times().total_seconds}s</span>
+                        </>
+                    }</Show>
             </div>
             <div class='flex flex-row h-full'>
                 <div class='flex flex-col'>
-                    <h2 class='select-none cursor-pointer hover:bg-indigo-600 flex-1 bg-indigo-500 text-green-100 border-b-2 justify-center items-center flex'>True Positives</h2>
-                    <h2 class='select-none cursor-pointer hover:bg-indigo-600 flex-1 bg-indigo-500 text-green-100 border-b-2 justify-center items-center flex'>False Positives</h2>
-                    <h2 class='select-none cursor-pointer hover:bg-indigo-600 flex-1 bg-indigo-500 text-green-100 border-b-2 justify-center items-center flex'>Negatives</h2>
+                    <h2 onClick={() => set_tab('tp')} class={`${is_selected_tab('tp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>True Positives</h2>
+                    <h2 onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>False Positives</h2>
+                    <h2 onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex`}>Negatives</h2>
                 </div>
                 <div class='flex-1 flex bg-silver-900 h-50'>
                     <div class='flex-1 flex flex-col overflow-auto'>
-                        <For each={list}>{() =>
-                            <div class='select-none cursor-pointer p-1 flex gap-1 items-center bg-lime-100 even:bg-yellow-100 border-b border-dashed border-cyan-300 hover:bg-yellow-200 active:bg-lime-200'>
+                        <For each={list}>{item =>
+                            <div class={`select-none cursor-pointer p-1 flex gap-1 items-center bg-lime-100 even:bg-yellow-100 border-b border-dashed border-cyan-300 hover:bg-yellow-200 active:bg-lime-200 ${is_selected_puzzle(item.id) ? 'bg-lime-400': ''}`}>
                                 <div class=''>1.</div>
                                 <div class='p-2 text-center'>#00008</div>
                                 <div class='p-2 flex-1 flex-wrap flex text-sm gap-1 max-w-50'>
