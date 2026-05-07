@@ -109,6 +109,8 @@ export default function GofEditor(props: { content?: string, on_content: (_: str
         editor.onDidChangeModelContent(() => {
             props.on_content(editor.getValue())
         })
+
+        setTimeout(() => editor.focus(), 0)
     })
 
     let $el!: HTMLDivElement

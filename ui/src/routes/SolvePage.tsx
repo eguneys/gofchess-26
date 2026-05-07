@@ -5,6 +5,7 @@ import GofEditor from "../components/GofEditor";
 import GofEditorOutput from "../components/GofEditorOutput";
 import { useState } from "../state/State";
 import { CoverageResult } from "../state/worker_types";
+import type { Color } from "hopefox";
 
 export default function SolvePage() {
 
@@ -121,10 +122,9 @@ export function ChesslineGroup() {
 
 export function ChessboardGroup() {
 
-    const [{ worker_state: state },{gofchess_actions: { set_ephemeral_code, save_work }}] = useState()
+    const [{ worker_state: state, gofchess_state: { puzzle_state } },{gofchess_actions: { set_ephemeral_code, save_work }}] = useState()
 
     const on_command = (cmd: string) => {
-
         if (cmd === 'write') {
             save_work()
         }
@@ -146,7 +146,12 @@ export function ChessboardGroup() {
                 </div>
             </div>
             <div class='flex-3 p-2 bg-amber-400 rounded border border-slate-500'>
-                <Chessboard fen="" />
+                <Chessboard fen={puzzle_state.fen} />
+                <div class='flex flex-wrap gap-0.5 border-t border-violet-700 m-2'>
+                    <For each={puzzle_state.solution}>{(san,i) =>
+                        <div class={`leading-8 flex select-none cursor-pointer py-0.5 px-2 rounded bg-violet-500 text-orange-50 hover:bg-violet-600`}><div class='font-bold'>{index_to_ply(i(), puzzle_state.initial_turn)}</div>{san}</div>
+                    }</For>
+                </div>
             </div>
 
         </div>
@@ -179,3 +184,14 @@ export function ChessInfoGroup() {
     </>)
 }
 
+
+
+const index_to_ply = (i: number, color: Color) => {
+
+    let ply = Math.ceil(i / 2) + 1
+    if (color === 'black') {
+        return i === 0 ? `${ply}..` : i % 2 == 1 ? `${ply}.` : ''
+    } else {
+        return i % 2 == 0 ? `${ply}.` : ''
+    }
+}

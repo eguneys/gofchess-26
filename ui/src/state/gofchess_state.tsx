@@ -1,9 +1,9 @@
 import { createStore } from "solid-js/store"
 import type { WorkerActions, WorkerState } from "./Worker"
 import { makePersisted } from "@solid-primitives/storage"
-import { createSignal } from "solid-js"
+import { batch, createSignal } from "solid-js"
 import type { Puzzle } from "./puzzles"
-import { INITIAL_FEN, type SAN } from "hopefox"
+import { Chess, INITIAL_FEN, parseFen, type Color, type SAN } from "hopefox"
 import type { FEN } from "@lichess-org/chessground/types"
 
 export type State = {
@@ -72,6 +72,7 @@ type PuzzleNavigateState = {
     puzzle: Puzzle | undefined
     solution: SAN[]
     fen: FEN
+    initial_turn: Color
 }
 
 type PuzzleNavigateActions = {
@@ -82,9 +83,16 @@ type PuzzleNavigateStore = [PuzzleNavigateState, PuzzleNavigateActions]
 
 export function createPuzzleNavigate(): PuzzleNavigateStore {
 
-    let [puzzle, set_puzzle] = createSignal<Puzzle | undefined>(undefined)
+    let [puzzle, set_puzzle] = createSignal<Puzzle | undefined>(undefined, { equals: false})
 
     let state = {
+        get initial_turn() {
+            let p = puzzle()
+            if (!p) {
+                return 'white'
+            }
+            return Chess.fromSetup(parseFen(p.fen).unwrap()).unwrap().turn
+        },
         get puzzle() {
             return puzzle()
         },
