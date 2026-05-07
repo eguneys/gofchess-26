@@ -1,12 +1,33 @@
-### Farewell BanditChess Introducing GofChess
+### Farewell BanditChess — Introducing GofChess
 
 
-Some of you may remember, about a year ago We published BanditChess; you can read [it's blog post here.](https://lichess.org/@/heroku/blog/introducing-bandit-chess/QmgstUVO). It's time to say goodbye to it. We are coming up with a brand new chess idea. This is my long time ultimate dream project. So Let's get to it.
+Some of you may remember [BanditChess](https://lichess.org/@/heroku/blog/introducing-bandit-chess/QmgstUVO), which we published about a year ago. It's time to say goodbye to it. 
 
-Imagine A Language to express tactical ideas in a game of chess, and run it against the puzzle database and see the coverage statistics. Welcome to GofChess. But there is more to it, idea has so much potential, Imagine a chess engine that can explain the best lines and why they work. But there is more to it, Imagine building your own chess engine using your own ideas expressed cleanly in a formal way similar to doing math for chess. That's how we come up with the name, GofChess G of F like a function composition. It has a similar vibe if you get down to it. 
+In its place comes a brand new chess project. GofChess.
+
+This is my long-time dream project.
+
+Imagine a language to express tactical ideas in chess, and run it against the puzzle database and see their coverage and effectiveness. 
+
+Welcome to GofChess. 
+
+But there is more to it.
+
+Imagine a chess engine that can explain the best lines and why they work. Imagine building your own chess engine using your own ideas expressed cleanly and compositionally — almost like writing mathematics for chess concepts.
+
+That is where the name comes from: GofChess — inspired by G of F like function composition.
 
 But it might take you some time to getting used to the language, although it is very expressive, and flexible, there is a learning curve for non-programmer chess enthusiasts. Also since the early release, there is bugs, and unfriendly errors happening sometimes.
 
-Once you have some time, stop on by at [gofchess.com](https://gofchess.com/), and become a part of the community waiting to thrive.
+Here's a sneak peak:
 
-PS: You can find a more in-depth technical discussion of the Language in my [following blog-post]().
+```
+if attacks_through(queen, knight, bishop)
+ve defends(bishop2, knight)
+ve captures(bishop, knight_bishop3)
+  if exchanges_hanging(bishop2, bishop3_bishop4, queen, queen2)
+```
+
+Once you have some time, stop on by at [gofchess.com](https://gofchess.com/), and become a part of the community we hope will grow around these ideas.
+
+PS: You can find a more in-depth technical discussion of the Language in my [upcoming follow-up blog post]().
