@@ -24,7 +24,7 @@ ve attack_and_through { Rd8 }
 
 We can also tag certain lines to be principal variations or best lines, so we know when they match we have a tactic with that principal idea. Not super clear? more on that later.
 
-In the example above, if you check the puzzle given in the link <sub>at the top comment</sub>, you can clearly see the moves for the best line has been found by some lines in this tactical description.
+In the example above, if you check the puzzle given in the link <small>at the top comment</small>, you can clearly see the moves for the best line has been found by some lines in this tactical description.
 
 ### So How does this work?
 
@@ -98,5 +98,5 @@ Finally the "ve" clause is just a simple "and" condition as if the 2 bounding li
 
 ### Witness Lines — Is this supposed to find a proof for a certain tactical idea exists?
 
-### How to use the Language on the Website, and Test Your Ideas against a Puzzle Database?
+### How to use the Language on gofchess.com, and Test Your Ideas against a Puzzle Database?
 
