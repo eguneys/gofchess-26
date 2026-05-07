@@ -22,12 +22,18 @@ But it might take you some time to getting used to the language, although it is 
 Here's a sneak peak:
 
 ```
-if attacks_through(queen, knight, bishop)
-ve defends(bishop2, knight)
-ve captures(bishop, knight_bishop3)
-  if exchanges_hanging(bishop2, bishop3_bishop4, queen, queen2)
+1 https://lichess.org/training/0000D
+if in_backrank_wall { Rd8 }
+ve attack_and_through { Rd8 }
+ if evades_attack_non_confrontational { Rd8 Qa3 }..
+  if check_king_with_block_no_capture_no_evade { Rd8 Qa3 Rxd1+ }..
+   if blocks { Rd8 Qa3 Rxd1+ Ne1 }..
+    if checkmate { Rd8 Qa3 Rxd1+ Ne1 Rxe1# }..
+ if evades_with_cover_block { Rd8 Qb4 }..
+  if captures_hanging { Rd8 Qb4 Qxb4 }.
+ if sacrifices_with_exchange { Rd8 Qxd8+ Bxd8 }
 ```
 
-Once you have some time, stop on by at [gofchess.com](https://gofchess.com/), and become a part of the community we hope will grow around these ideas.
+Once you have some time, stop on by at [gofchess.com](https://gofchess.com/), and become a part of a community we hope will grow around these ideas.
 
-PS: You can find a more in-depth technical discussion of the Language in my [upcoming follow-up blog post]().
+PS: You can find a more in-depth technical discussion of the Language in my [upcoming follow-up blog post](blog2.md).
