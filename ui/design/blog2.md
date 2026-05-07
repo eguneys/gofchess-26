@@ -24,7 +24,7 @@ ve attack_and_through { Rd8 }
 
 We can also tag certain lines to be principal variations or best lines, so we know when they match we have a tactic with that principal idea. Not super clear? more on that later.
 
-In the example above, if you check the puzzle given in the link <small>at the top comment</small>, you can clearly see the moves for the best line has been found by some lines in this tactical description.
+In the example above, if you check the puzzle given in the link _at the top comment_, you can clearly see the moves for the best line has been found by some lines in this tactical description.
 
 ### So How does this work?
 

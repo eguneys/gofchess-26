@@ -1,7 +1,7 @@
 import { createStore } from "solid-js/store"
 import type { WorkerActions, WorkerState } from "./Worker"
 import { makePersisted } from "@solid-primitives/storage"
-import { batch, createSignal } from "solid-js"
+import { createSignal } from "solid-js"
 import type { Puzzle } from "./puzzles"
 import { Chess, INITIAL_FEN, parseFen, type Color, type SAN } from "hopefox"
 import type { FEN } from "@lichess-org/chessground/types"
