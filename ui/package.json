@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@lichess-org/chessground": "^10.1.1",
+    "@solid-primitives/memo": "^1.4.5",
     "@solidjs/router": "^0.16.1",
     "@tailwindcss/vite": "^4.2.4",
     "chessops": "^0.15.0",

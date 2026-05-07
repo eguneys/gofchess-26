@@ -1,7 +1,6 @@
-import { createAsync } from '@solidjs/router'
 import Worker from './worker2?worker'
 import { CoverageResult, type BatchWorkContinuationOut, type BatchWorkOut } from './worker_types'
-import { batch } from 'solid-js'
+import { batch, createSignal } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 export type FullCoverage = {
@@ -29,38 +28,41 @@ export type BatchInProgressMerged = {
 export type WorkerState = {
     is_ready: boolean
     batch_in_progress_merged: BatchInProgressMerged
+    compile_error: boolean
 }
 
 export type WorkerActions = {
     reset_others_and_begin_on_code(code: string): void
 }
 
-export function make_worker() {
+type WorkerStore = [WorkerState, WorkerActions]
+
+export function make_worker(): WorkerStore {
     let worker = new Worker()
 
     let [consumer, { add_workout, reset_work: consumer_reset_work }] = createBatchConsumer()
 
+    const [compile_error, set_compile_error] = createSignal(false)
+
     worker.onmessage = (e) => {
-        if (e.data === 'work_out') {
+        if (e.data === 'ready') {
+            set_isReady(true)
+        } else if (e.data?.t === 'work_out') {
             add_workout(e.data.work_out)
-        }
-    }
-
-    let isReady = createAsync(() => new Promise<boolean>(resolve => {
-        worker.onmessage = (e) => {
-            if (e.data === 'ready') {
-                resolve(true)
-            }
-        }
-    }), { initialValue: false })
-
-    worker.onmessage = (e) => {
-        if (e.data?.t === 'ack_work_in') {
+        } else if (e.data?.t === 'compile_error') {
+            set_compile_error(true)
+        } else if (e.data?.t === 'ack_work_in') {
             consumer_reset_work()
         }
     }
 
+    let [isReady, set_isReady] = createSignal(false)
+
     const reset_work = (code: string) => {
+        if (!isReady()) {
+            return
+        }
+        set_compile_error(false)
         worker.postMessage({ t: 'work_in', work_in: { code } })
     }
 
@@ -70,11 +72,15 @@ export function make_worker() {
         },
         get batch_in_progress_merged() {
             return consumer.batch_in_progress_merged
+        },
+        get compile_error() {
+            return compile_error()
         }
     }
 
     let actions = {
         reset_others_and_begin_on_code(code: string) {
+            
             reset_work(code)
         }
     }
@@ -107,10 +113,11 @@ function createBatchConsumer(): BatchConsumer {
         progress_percent: 0
     })
 
-    const update_batch_in_progress_merged = (po: BatchWorkOut, total: number, elapsed_ms: number) => {
+    const update_batch_in_progress_merged = (batch: BatchWorkContinuationOut, elapsed_ms: number) => {
+        let total = batch.total
         set_batch_in_progress_merged('total', total)
 
-        set_batch_in_progress_merged('partial_out', _ => [..._, po])
+        set_batch_in_progress_merged('partial_out', _ => [..._, ...batch.partial_out])
 
         let total_so_far = batch_in_progress_merged.partial_out.length
         set_batch_in_progress_merged('progress_percent', total_so_far / total * 100)
@@ -133,17 +140,28 @@ function createBatchConsumer(): BatchConsumer {
             }
             set_batch_in_progress_merged('running_coverage', running_coverage)
         }
-        switch (po.coverage.result) {
-            case CoverageResult.Tp:
-                set_batch_in_progress_merged('running_coverage', 'Tp', _ => _ + 1)
-                break
-            case CoverageResult.Fp:
-                set_batch_in_progress_merged('running_coverage', 'Fp', _ => _ + 1)
-                break
-            case CoverageResult.N:
-                set_batch_in_progress_merged('running_coverage', 'N', _ => _ + 1)
-                break
+
+        let Total_Tp = 0
+        let Total_Fp = 0
+        let Total_N = 0
+
+        for (let po of batch.partial_out) {
+            switch (po.coverage.result) {
+                case CoverageResult.Tp:
+                    Total_Tp++
+                    break
+                case CoverageResult.Fp:
+                    Total_Fp++
+                    break
+                case CoverageResult.N:
+                    Total_N++
+                    break
+            }
         }
+
+        set_batch_in_progress_merged('running_coverage', 'Tp', _ => _ + Total_Tp)
+        set_batch_in_progress_merged('running_coverage', 'Fp', _ => _ + Total_Fp)
+        set_batch_in_progress_merged('running_coverage', 'N', _ => _ + Total_N)
 
 
         let running_times: RunningTimes = {
@@ -168,9 +186,7 @@ function createBatchConsumer(): BatchConsumer {
         add_workout(work_out: BatchWorkContinuationOut) {
             let elapsed_ms = performance.now() -  start_time
             batch(() => {
-                for (let po of work_out.partial_out) {
-                    update_batch_in_progress_merged(po, work_out.total, elapsed_ms)
-                }
+                update_batch_in_progress_merged(work_out, elapsed_ms)
             })
         }
     }

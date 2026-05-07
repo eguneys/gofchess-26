@@ -1,7 +1,7 @@
 import wasm_url from '../assets/wasm/hopefox.wasm?url'
 import { PositionManager } from "hopefox";
 import { parse_puzzles } from './puzzles';
-import { PuzzleBatchWorker  } from './worker_types';
+import { CompileError, PuzzleBatchWorker  } from './worker_types';
 
 const tenk = '/data/tenk_puzzle.csv'
 
@@ -32,7 +32,13 @@ function batch_begin_work_loop() {
 
 onmessage = (e) => {
     if (e.data.t === 'work_in') {
+        try {
         batch_worker.begin_work(e.data.work_in)
+        } catch(e) {
+            if (e instanceof CompileError) {
+                postMessage({ t: 'compile_error' })
+            }
+        }
         postMessage({ t: 'ack_work_in' })
     }
 }

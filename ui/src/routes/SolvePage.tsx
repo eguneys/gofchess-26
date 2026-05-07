@@ -3,6 +3,8 @@ import { createMemo, createSelector, createSignal, For, Show } from "solid-js";
 import { A } from "@solidjs/router";
 import GofEditor from "../components/GofEditor";
 import GofEditorOutput from "../components/GofEditorOutput";
+import { useState } from "../state/State";
+import { CoverageResult } from "../state/worker_types";
 
 export default function SolvePage() {
 
@@ -27,33 +29,31 @@ export default function SolvePage() {
 type Tab = 'tp' | 'fp' | 'ne'
 export function ChesslineGroup() {
 
-    const list = 'aslkdfjlskadjlksadjflksdajlfkjadslfdsla'.split('').map(_ => ({
-        id: _
-    }))
-
-    const tags = ['mateIn1', 'backrankMate', 'advanced', 'long', 'short', 'medium']
-
     const [tab, set_tab] = createSignal<Tab>('tp')
+
+    const [{ gofchess_state: state, worker_state }, { gofchess_actions: { save_work, set_selected_puzzle_id }}] = useState()
+
+    const Tp_list = createMemo(() => 
+        worker_state.batch_in_progress_merged.partial_out
+            .filter(_ => _.coverage.result === CoverageResult.Tp))
+    const Fp_list = createMemo(() => 
+        worker_state.batch_in_progress_merged.partial_out
+            .filter(_ => _.coverage.result === CoverageResult.Fp))
+    const N_list = createMemo(() => 
+        worker_state.batch_in_progress_merged.partial_out
+            .filter(_ => _.coverage.result === CoverageResult.N))
+
+    const list = createMemo(() => tab() === 'tp' ? Tp_list() : tab() === 'fp' ? Fp_list() : N_list())
+
+    const cut_list = createMemo(() => list().slice(0, 100))
 
     const is_selected_tab = createSelector(tab)
 
-    const coverage = createMemo(() => ({
-        percent: 50,
-        accuracy: 100,
-        Tp: 1,
-        Fp: 1000,
-        N: 10000,
-        Total: 10000
-    }))
+    const coverage = createMemo(() => worker_state.batch_in_progress_merged.running_coverage)
 
-    const running_times = createMemo(() => ({
-        per_puzzle_ms: 1,
-        total_seconds: 10
-    }))
+    const running_times = createMemo(() => worker_state.batch_in_progress_merged.running_times)
 
-    const selected_puzzle_id = createMemo(() => 'a')
-
-    const is_selected_puzzle = createSelector(selected_puzzle_id)
+    const is_selected_puzzle = createSelector(() => state.selected_puzzle_id)
 
     return (<>
         <div class='flex flex-col bg-silver-900 rounded border border-slate-500 h-full'>
@@ -74,28 +74,35 @@ export function ChesslineGroup() {
 
                 <Show when={running_times()} fallback={
                     <>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Time per puzzle: --</span>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>took --</span>
                     </>
                 }>{times =>
                         <>
-                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Time per puzzle: {times().per_puzzle_ms}ms</span>
-                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>took {times().total_seconds}s</span>
+                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Time per puzzle: {Math.round(times().per_puzzle_ms * 100) / 100}ms</span>
+                            <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>took {Math.round(times().total_seconds)}s</span>
                         </>
                     }</Show>
             </div>
             <div class='flex flex-row h-full'>
                 <div class='flex flex-col'>
-                    <div onClick={() => set_tab('tp')} class={`${is_selected_tab('tp') ? 'bg-indigo-700' : 'bg-slate-500'} select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>True Positives</div> <div>({coverage().Tp})</div></div>
-                    <div onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>False Positives </div><div>({coverage().Fp})</div></div>
-                    <div onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>Negatives </div><div>({coverage().N})</div></div>
+                    <div onClick={() => set_tab('tp')} class={`${is_selected_tab('tp') ? 'bg-indigo-700' : 'bg-slate-500'} select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>True Positives</div> <div>({coverage()?.Tp ?? '--'})</div></div>
+                    <div onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>False Positives </div><div>({coverage()?.Fp ?? '--'})</div></div>
+                    <div onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>Negatives </div><div>({coverage()?.N ?? '--'})</div></div>
                 </div>
-                <div class='flex-1 flex flex-col bg-silver-900 max-h-65'>
-                    <div class='flex flex-col overflow-y-auto'>
-                        <For each={list}>{item =>
-                            <div class={`select-none cursor-pointer p-1 flex gap-1 items-center bg-lime-100 even:bg-yellow-100 border-b border-dashed border-cyan-300 hover:bg-yellow-200 active:bg-lime-200 ${is_selected_puzzle(item.id) ? 'bg-lime-400': ''}`}>
-                                <div class=''>1.</div>
-                                <div class='p-2 text-center'>#00008</div>
+                <div class='flex-1 flex flex-col bg-silver-900 h-50'>
+                    <div class='h-full flex-1 flex flex-col overflow-y-auto'>
+                        <For each={cut_list()} fallback={
+                            <div class='flex-1 flex flex-col items-center justify-center'>
+                                <p class='text-slate-700 text-lg'>No Puzzles here G.</p>
+                                <button onClick={save_work} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-green-400 hover:bg-green-500 active:bg-green-600'>Save the script to run it against puzzles</button>
+                            </div>
+                        }>{item =>
+                            <div onClick={() => set_selected_puzzle_id(item.puzzle.id)} class={`select-none cursor-pointer p-1 flex gap-1 items-center bg-lime-100  border-b border-dashed border-cyan-300 active:bg-lime-200 ${is_selected_puzzle(item.puzzle.id) ? 'bg-lime-400': 'hover:bg-yellow-200 even:bg-yellow-100'}`}>
+                                <div class=''>{item.puzzle.index}.</div>
+                                <div class='p-2 text-center'>#{item.puzzle.id}</div>
                                 <div class='p-2 flex-1 flex-wrap flex text-sm gap-1 max-w-50'>
-                                    <For each={tags}>{tag =>
+                                    <For each={item.puzzle.tags.split(' ')}>{tag =>
                                         <span>{tag}</span>
                                     }</For>
                                 </div>
@@ -113,11 +120,26 @@ export function ChesslineGroup() {
 }
 
 export function ChessboardGroup() {
+
+    const [{ worker_state: state },{gofchess_actions: { set_ephemeral_code, save_work }}] = useState()
+
+    const on_command = (cmd: string) => {
+
+        if (cmd === 'write') {
+            save_work()
+        }
+    }
+
     return (<>
         <div class='flex-1 flex flex-col lg:flex-row gap-0.5'>
             <div class='flex-8 flex flex-row bg-emerald-500 rounded border border-slate-500'>
-                <div class='flex flex-1 border-r border-dashed border-slate-100'>
-                    <GofEditor/>
+                <div class='relative flex flex-1 border-r border-dashed border-slate-100'>
+                    <GofEditor on_content={set_ephemeral_code} on_command={on_command}/>
+                    <Show when={state.compile_error}>
+                        <div class='absolute bottom-0 right-0 bg-red-500 text-white p-2 border-2 border-dashed rounded'>
+                            Compile Error
+                        </div>
+                    </Show>
                 </div>
                 <div class='flex-1'>
                     <GofEditorOutput/>

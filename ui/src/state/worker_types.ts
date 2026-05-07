@@ -44,9 +44,19 @@ export class PuzzleBatchWorker {
     constructor(private m: PositionManager, private puzzles: Puzzle[]) {}
 
     begin_work(work_in: BatchWorkIn) {
+
+        let compiled_fn
+        
+        try {
+            compiled_fn = usage(work_in.code)
+        } catch (e) {
+
+            throw new CompileError()
+        }
+
         this.resumable_existing_batches = { 
             resume_index: 0,
-            compiled_fn: usage(work_in.code),
+            compiled_fn,
             work_in
         }
     }
@@ -64,7 +74,7 @@ export class PuzzleBatchWorker {
 
             let res = this.do_work(batch)
 
-            if (!res.end_index) {
+            if (res.end_index === undefined) {
                 return {
                     total: this.puzzles.length,
                     partial_out: res.partial_out,
@@ -135,3 +145,5 @@ function compare_coverage_result(visual: Visual_CompositeNestedGraphRoot, sans: 
     sans;
     return CoverageResult.Fp
 }
+
+export class CompileError extends Error {}

@@ -1,5 +1,7 @@
+import { Chess, makeFen, makeSan, parseFen, parseUci } from "hopefox"
+
 export function parse_puzzles(str: string): Puzzle[] {
-    return str.trim().split('\n').map(_ => {
+    return str.trim().split('\n').map((_, i) => {
 
         let [id, fen, moves, _a, _b, _c, _d, tags] = _.split(',')
 
@@ -11,6 +13,7 @@ export function parse_puzzles(str: string): Puzzle[] {
         let initial = true
 
         return {
+            index: i,
             id, link, fen, moves, tags, 
             get move_fens() {
                 let move_fens: string[] = []
@@ -34,6 +37,7 @@ export function parse_puzzles(str: string): Puzzle[] {
 }
 
 export type Puzzle = {
+    index: number
     id: string,
     link: string,
     fen: string,

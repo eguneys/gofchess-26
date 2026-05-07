@@ -17,7 +17,7 @@ self.MonacoEnvironment = {
     }
 }
 
-export default function GofEditor(props: { content?: string }) {
+export default function GofEditor(props: { content?: string, on_content: (_: string) => void, on_command: (_: string) => void }) {
 
     function getCurrentVimMode() {
         let statusNode = $status
@@ -93,16 +93,21 @@ export default function GofEditor(props: { content?: string }) {
 
         //@ts-ignore
         VimMode.Vim.defineEx('write', 'w', () => {
-            console.log('yes')
+            props.on_command('write')
         })
         //@ts-ignore
         VimMode.Vim.defineEx('pass', 'p', () => {
-            console.log('pass')
+            props.on_command('pass')
         })
 
         onCleanup(() => {
             editor.dispose()
             vimMode.dispose()
+        })
+
+
+        editor.onDidChangeModelContent(() => {
+            props.on_content(editor.getValue())
         })
     })
 

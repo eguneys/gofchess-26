@@ -22,8 +22,8 @@ export type GofchessStore = [GofchessState, GofchessActions]
 
 export const GofchessProvider = (props: { children: JSX.Element }) => {
 
-    const [gofchess_state, gofchess_actions] = make_gofchess_store()
     const [worker_state, worker_actions] = make_worker()
+    const [gofchess_state, gofchess_actions] = make_gofchess_store(worker_state, worker_actions)
 
 
     const state = {
