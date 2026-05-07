@@ -169,6 +169,7 @@ Honest answer: We are not sure. We don't know how strong or useful this language
 Tagging system that looks like this, taken from earlier examples mentioned above:
 
 ```if checkmate(rook5, rook6, king) [cond]```
+
 ```if sacrifices_with_exchange(queen3, rook3_queen4, bishop, bishop2) [win]```
 
 Note the `[cond]` and `[win]` tags. `cond` tag means, in order for the solution of the puzzle to match, this branch has to be matched at least 1 times. `win` tag means, This branch of the puzzle has to be matched exactly 1 times and it describes the absolute best line for this tactical idea.
@@ -179,12 +180,12 @@ And we are done, we can't get any more expressive than that. So far of course...
 
 Gofchess.com is a domain we bought for monetization purposes, but honestly it's a small tech demo, with an super early release version. So beware of getting stuck and things not making sense. But we are dedicated to provide support and maintenance to this project, personally and hopefully profesionally in the future ahead of us. 
 
-There is also a README on the [github repository of the website](https://github.com/eguneys/gofchess-26) on instructions on how to use the Website. So Please make sure to check it out and leave a star if you will.
+There is also a README on the [github repository of the website](https://github.com/eguneys/gofchess-26) on instructions on how to use the website. So Please make sure to check it out and leave a star if you will.
 
 ### Contributing — Getting even deeper!
 
 There is a private repository for the engine that runs the language optimized for performance currently being written in C++ which we hopefully plan to release in the future. 
-There is also a [main repository](https://github.com/eguneys/hopefox) that runs the language, written in Typescript. We have put out a README if you want to get more advanced. It has some tests and you can experiment the language through the test runner, that reads from a script file and writes back to an output file, which you can put side by side, and iterate in a live reloading fashion.
+There is also a [main repository](https://github.com/eguneys/hopefox) that runs the language, written in Typescript. We have put out a README if you want to get more advanced. It has some tests and you can experiment the language through the test runner, that reads from a script file and writes back to an output file, which you can put side by side, and iterate in a live reloading fashion. So Please don't forget to give that a star as well.
 
 
 We've been circling around similar ideas for years, to come up with this idea we are still in the process of shaping. As Roman Dzindzichashvili once said in his DVD's and I remember, 
