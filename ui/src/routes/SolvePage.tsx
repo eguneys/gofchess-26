@@ -14,7 +14,7 @@ export default function SolvePage() {
             </div>
         </div>
         <div class='flex-1 flex p-0.5 gap-1'>
-            <div class='flex-2'>
+            <div class='flex flex-col flex-2'>
                 <ChesslineGroup />
             </div>
             <div class='flex-1'>
@@ -88,8 +88,8 @@ export function ChesslineGroup() {
                     <div onClick={() => set_tab('fp')} class={`${is_selected_tab('fp')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>False Positives </div><div>({coverage().Fp})</div></div>
                     <div onClick={() => set_tab('ne')} class={`${is_selected_tab('ne')? 'bg-indigo-700' : 'bg-slate-500' } select-none cursor-pointer hover:bg-indigo-800 flex-1 text-green-100 border-b-2 justify-center items-center flex flex-col px-2`}><div>Negatives </div><div>({coverage().N})</div></div>
                 </div>
-                <div class='flex-1 flex bg-silver-900 h-50'>
-                    <div class='flex-1 flex flex-col overflow-auto'>
+                <div class='flex-1 flex flex-col bg-silver-900 max-h-65'>
+                    <div class='flex flex-col overflow-y-auto'>
                         <For each={list}>{item =>
                             <div class={`select-none cursor-pointer p-1 flex gap-1 items-center bg-lime-100 even:bg-yellow-100 border-b border-dashed border-cyan-300 hover:bg-yellow-200 active:bg-lime-200 ${is_selected_puzzle(item.id) ? 'bg-lime-400': ''}`}>
                                 <div class=''>1.</div>

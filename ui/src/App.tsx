@@ -1,5 +1,6 @@
 import { A, Route, Router } from "@solidjs/router"
 import { type JSX, lazy } from "solid-js"
+import { GofchessProvider } from "./state/State"
 
 const SolvePage = lazy(() => import("./routes/SolvePage"))
 
@@ -18,9 +19,11 @@ const Layout = (props: { children?: JSX.Element }) => {
 
 function App() {
   return (<>
-    <Router root={Layout}>
-      <Route path='/' component={SolvePage}/>
-    </Router>
+    <GofchessProvider>
+      <Router root={Layout}>
+        <Route path='/' component={SolvePage} />
+      </Router>
+    </GofchessProvider>
   </>)
 }
 
