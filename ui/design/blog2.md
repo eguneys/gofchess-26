@@ -180,7 +180,7 @@ And we are done, we can't get any more expressive than that. So far of course...
 
 Gofchess.com is a domain we bought for monetization purposes, but honestly it's a small tech demo, with an super early release version. So beware of getting stuck and things not making sense. But we are dedicated to provide support and maintenance to this project, personally and hopefully profesionally in the future ahead of us. 
 
-There is also a README on the [github repository of the website](https://github.com/eguneys/gofchess-26) on instructions on how to use the website. So Please make sure to check it out and leave a star if you will.
+There is also a README on the [github repository of gofchess.com website](https://github.com/eguneys/gofchess-26) on instructions on how to use the website. So Please make sure to check it out and leave a star if you will.
 
 ### Contributing — Getting even deeper!
 
@@ -188,6 +188,6 @@ There is a private repository for the engine that runs the language optimized fo
 There is also a [main repository](https://github.com/eguneys/hopefox) that runs the language, written in Typescript. We have put out a README if you want to get more advanced. It has some tests and you can experiment the language through the test runner, that reads from a script file and writes back to an output file, which you can put side by side, and iterate in a live reloading fashion. So Please don't forget to give that a star as well.
 
 
-We've been circling around similar ideas for years, to come up with this idea we are still in the process of shaping. As Roman Dzindzichashvili once said in his DVD's and I remember, 
+We've been circling around similar ideas for years, to come up with this idea we are still in the process of shaping. As Roman Dzindzichashvili once said in one of his DVD's and I remember, 
 
 > We don't know we are going to win, but we have to believe, and make the next best move.
