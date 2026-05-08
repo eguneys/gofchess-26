@@ -1,4 +1,4 @@
-import { PositionManager, usage, type PositionC, type Visual_CompositeNestedGraphRoot } from "hopefox"
+import { PositionManager, usage, type PositionC, type Visual_CompositeNestedGraphNode, type Visual_CompositeNestedGraphRoot } from "hopefox"
 import type { Puzzle } from "./puzzles"
 export enum CoverageResult {
     Tp,
@@ -106,13 +106,16 @@ export class PuzzleBatchWorker {
 
         const now = performance.now()
         for (let i = resume_index; i < end_index; i++) {
-            partial_out.push(do_work_in_puzzle(this.m, this.puzzles[i], batch.compiled_fn))
+            let aaa = do_work_in_puzzle(this.m, this.puzzles[i], batch.compiled_fn)
+            partial_out.push(aaa)
         }
         let elapsed_ms = performance.now() - now
 
         let per_puzzle_ms = elapsed_ms / (end_index - resume_index)
 
         this.batch_size = Math.floor(1000 / per_puzzle_ms)
+
+
 
         if (end_index === this.puzzles.length) {
             return {
@@ -130,7 +133,14 @@ function do_work_in_puzzle(m: PositionManager, puzzle: Puzzle, compiled_fn: Comp
     let pos = m.create_position(puzzle.move_fens[0])
     let visual = compiled_fn(m, pos)
 
+    m.delete_position(pos)
+
     let result = compare_coverage_result(visual, puzzle.sans)
+
+    if (puzzle.id === '004Ao') {
+        console.log(visual[0].data.call[0].witness)
+        debugger
+    }
 
     let coverage: PartialCoverage = {
         result,
@@ -140,10 +150,79 @@ function do_work_in_puzzle(m: PositionManager, puzzle: Puzzle, compiled_fn: Comp
 }
 
 
-function compare_coverage_result(visual: Visual_CompositeNestedGraphRoot, sans: string[]) {
-    visual;
-    sans;
+function compare_coverage_result(visual: Visual_CompositeNestedGraphRoot, solution: string[]) {
+    if (is_negative(visual)) {
+        return CoverageResult.N
+    }
+    if (match_solution_root(visual, solution)) {
+        return CoverageResult.Tp
+    }
     return CoverageResult.Fp
 }
 
 export class CompileError extends Error {}
+
+function is_negative(root: Visual_CompositeNestedGraphRoot) {
+    function has_on_leaf(leaf: Visual_CompositeNestedGraphNode): boolean {
+        if (leaf.children.length > 0) {
+            return leaf.children.some(_ => has_on_leaf(_))
+        }
+        return temporary_dedup(leaf.data.call[0].witness).length === 1
+    }
+
+    function fail_cond(leaf: Visual_CompositeNestedGraphNode): boolean {
+        if (leaf.children.length > 0) {
+            return leaf.children.some(_ => fail_cond(_))
+        }
+        if (leaf.data.tags.includes('cond')) {
+            if (leaf.data.call[0].witness.length === 0) {
+                return true
+            }
+        }
+        return false
+    }
+
+
+
+    if (root.some(_ => fail_cond(_))) {
+        return true
+    }
+
+    return !root.some(_ => has_on_leaf(_))
+}
+
+function match_solution_root(res: Visual_CompositeNestedGraphRoot, solution: string[]) {
+    return res.some(_ => match_solution_node(_, solution))
+}
+
+function match_solution_node(res: Visual_CompositeNestedGraphNode, solution: string[]): boolean {
+
+    if (res.data.tags.includes('win')) {
+        if (match_solution(res.data.call[0].witness, solution)) {
+            return true
+        }
+    }
+    
+    return res.children.some(_ => match_solution_node(_, solution))
+}
+
+
+function match_solution(res: string[][], solution: string[]) {
+   return res.some(_ => _.join(' ') === solution.join(' '))
+}
+
+function temporary_dedup(arr: string[][]) {
+
+    let dd = new Set()
+
+    let res = []
+
+    for (let i = 0; i < arr.length; i++) {
+        let str = arr[i].join(' ')
+        if (!dd.has(str)) {
+            dd.add(str)
+            res.push(arr[i])
+        }
+    }
+    return res
+}

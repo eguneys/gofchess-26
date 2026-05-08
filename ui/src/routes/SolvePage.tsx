@@ -56,6 +56,7 @@ export function ChesslineGroup() {
 
     const is_selected_puzzle = createSelector(() => state.selected_puzzle_id)
 
+
     return (<>
         <div class='flex flex-col bg-silver-900 rounded border border-slate-500 h-full'>
             <div class='flex justify-around leading-3'>
@@ -67,8 +68,8 @@ export function ChesslineGroup() {
                     </>
                 }>{ coverage => 
                     <>
-                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Coverage: %{coverage().percent}</span>
-                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Accuracy: %{coverage().accuracy}</span>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Coverage: %{Math.round(coverage().percent)}</span>
+                        <span class='text-center flex-2 p-2 bg-pink-500 text-blue-100'>Accuracy: %{Math.round(coverage().accuracy)}</span>
                         <span class='text-center text-nowrap flex-3 p-2 bg-pink-500 text-blue-100'>Tp/Fp: {coverage().Tp}/{coverage().Fp} N: {coverage().N} Total: {coverage().Total}</span>
                     </>
                 }</Show>
@@ -122,7 +123,9 @@ export function ChesslineGroup() {
 
 export function ChessboardGroup() {
 
-    const [{ worker_state: state, gofchess_state: { puzzle_state } },{gofchess_actions: { set_ephemeral_code, save_work }}] = useState()
+    const [{ worker_state: state, gofchess_state },{gofchess_actions: { set_ephemeral_code, save_work }}] = useState()
+
+    let { puzzle_state } = gofchess_state
 
     const on_command = (cmd: string) => {
         if (cmd === 'write') {
@@ -134,23 +137,32 @@ export function ChessboardGroup() {
         <div class='flex-1 flex flex-col lg:flex-row gap-0.5'>
             <div class='flex-8 flex flex-row bg-emerald-500 rounded border border-slate-500'>
                 <div class='relative flex flex-1 border-r border-dashed border-slate-100'>
-                    <GofEditor on_content={set_ephemeral_code} on_command={on_command}/>
+                    <GofEditor content={gofchess_state.code} on_content={set_ephemeral_code} on_command={on_command}/>
                     <Show when={state.compile_error}>
                         <div class='absolute bottom-0 right-0 bg-red-500 text-white p-2 border-2 border-dashed rounded'>
                             Compile Error
                         </div>
                     </Show>
                 </div>
-                <div class='flex-1'>
-                    <GofEditorOutput/>
+                <div class='flex flex-1'>
+                    <Show when={gofchess_state.visual_state.visual} fallback={<>
+                        <div class='flex-col gap-5 flex-1 flex justify-center items-center'>
+                            <p>Output will be shown here.</p>
+                            <button onClick={save_work} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-green-400 hover:bg-green-500 active:bg-green-600'>Save the script to run it against puzzles</button>
+                        </div>
+                        </>}>{ content => 
+                        <GofEditorOutput content={content()} />
+                    }</Show>
                 </div>
             </div>
-            <div class='flex-3 p-2 bg-amber-400 rounded border border-slate-500'>
+            <div class='flex flex-col flex-3 p-2 bg-amber-400 rounded border border-slate-500'>
                 <Chessboard fen={puzzle_state.fen} />
-                <div class='flex flex-wrap gap-0.5 border-t border-violet-700 m-2'>
-                    <For each={puzzle_state.solution}>{(san,i) =>
-                        <div class={`leading-8 flex select-none cursor-pointer py-0.5 px-2 rounded bg-violet-500 text-orange-50 hover:bg-violet-600`}><div class='font-bold'>{index_to_ply(i(), puzzle_state.initial_turn)}</div>{san}</div>
-                    }</For>
+                <div class='flex-1 border-t border-violet-700 m-2 min-h-7 overflow-auto'>
+                    <div class='flex flex-wrap gap-0.5'>
+                        <For each={puzzle_state.solution}>{(san, i) =>
+                            <div class={`leading-8 flex select-none cursor-pointer py-0.5 px-2 rounded bg-violet-500 text-orange-50 hover:bg-violet-600`}><div class='font-bold'>{index_to_ply(i(), puzzle_state.initial_turn)}</div>{san}</div>
+                        }</For>
+                    </div>
                 </div>
             </div>
 

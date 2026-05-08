@@ -1,7 +1,7 @@
 import Worker from './worker2?worker'
 import { CoverageResult, type BatchWorkContinuationOut, type BatchWorkOut } from './worker_types'
 import { batch, createSignal } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { createStore, produce } from 'solid-js/store'
 
 export type FullCoverage = {
     Tp: number
@@ -33,6 +33,7 @@ export type WorkerState = {
 
 export type WorkerActions = {
     reset_others_and_begin_on_code(code: string): void
+    add_listener_on_workout_added(cb: () => void): void
 }
 
 type WorkerStore = [WorkerState, WorkerActions]
@@ -40,6 +41,7 @@ type WorkerStore = [WorkerState, WorkerActions]
 export function make_worker(): WorkerStore {
     let worker = new Worker()
 
+    let workout_listeners: (() => void)[] = []
     let [consumer, { add_workout, reset_work: consumer_reset_work }] = createBatchConsumer()
 
     const [compile_error, set_compile_error] = createSignal(false)
@@ -49,6 +51,7 @@ export function make_worker(): WorkerStore {
             set_isReady(true)
         } else if (e.data?.t === 'work_out') {
             add_workout(e.data.work_out)
+            workout_listeners.forEach(l => l())
         } else if (e.data?.t === 'compile_error') {
             set_compile_error(true)
         } else if (e.data?.t === 'ack_work_in') {
@@ -80,8 +83,10 @@ export function make_worker(): WorkerStore {
 
     let actions = {
         reset_others_and_begin_on_code(code: string) {
-            
             reset_work(code)
+        },
+        add_listener_on_workout_added(cb: () => void) {
+            workout_listeners.push(cb)
         }
     }
 
@@ -117,11 +122,14 @@ function createBatchConsumer(): BatchConsumer {
         let total = batch.total
         set_batch_in_progress_merged('total', total)
 
-        set_batch_in_progress_merged('partial_out', _ => [..._, ...batch.partial_out])
+        set_batch_in_progress_merged(
+            produce((s) => {
+                s.partial_out.push(...batch.partial_out)
+            })
+        )
 
         let total_so_far = batch_in_progress_merged.partial_out.length
         set_batch_in_progress_merged('progress_percent', total_so_far / total * 100)
-
 
         if (batch_in_progress_merged.running_coverage === undefined) {
             let running_coverage: FullCoverage = {

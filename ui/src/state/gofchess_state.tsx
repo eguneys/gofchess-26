@@ -3,16 +3,18 @@ import type { WorkerActions, WorkerState } from "./Worker"
 import { makePersisted } from "@solid-primitives/storage"
 import { createSignal } from "solid-js"
 import type { Puzzle } from "./puzzles"
-import { Chess, INITIAL_FEN, parseFen, type Color, type SAN } from "hopefox"
+import { Chess, INITIAL_FEN, parseFen, visual_node_log, type Color, type SAN, type Visual_CompositeNestedGraphRoot } from "hopefox"
 import type { FEN } from "@lichess-org/chessground/types"
 
 export type State = {
+    visual_state: VisualOutputNavigateState
     puzzle_state: PuzzleNavigateState
     code: string
     selected_puzzle_id: string
 }
 
 export type Actions = {
+    visual_actions: VisualOutputNavigateActions
     puzzle_actions: PuzzleNavigateActions
     set_selected_puzzle_id: (_: string) => void
     set_ephemeral_code: (code: string) => void
@@ -23,16 +25,19 @@ export type GofchessStore = [State, Actions]
 
 export function make_gofchess_store(worker_state: WorkerState, worker_actions: WorkerActions): GofchessStore {
 
-    let [ephemeral_code, set_ephemeral_code] = createSignal('')
 
     let [store, set_store] = makePersisted(createStore({
         code: '',
         selected_puzzle_id: ''
     }), { name: '.gofchess.store.v1'})
+    let [ephemeral_code, set_ephemeral_code] = createSignal(store.code)
+
+    let [visual_state, visual_actions] = createVisualOutputNavigate()
 
     let [puzzle_state, puzzle_actions] = createPuzzleNavigate()
 
     let state = {
+        visual_state,
         puzzle_state,
         get code() {
             return store.code
@@ -43,16 +48,23 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
     }
 
 
+    const set_selected_puzzle_bindings = () => {
+        let selected_puzzle = worker_state.batch_in_progress_merged.partial_out
+            .find(_ => _.puzzle.id === state.selected_puzzle_id)
+
+        puzzle_actions.set_puzzle(selected_puzzle?.puzzle)
+        visual_actions.set_visual(selected_puzzle?.coverage.visual)
+    }
+
+    worker_actions.add_listener_on_workout_added(set_selected_puzzle_bindings)
+
     let actions = {
+        visual_actions,
         puzzle_actions,
         set_selected_puzzle_id(id: string) {
             set_store('selected_puzzle_id', id)
 
-            let selected_puzzle = worker_state.batch_in_progress_merged.partial_out
-                .find(_ => _.puzzle.id === id)?.puzzle
-
-            puzzle_actions.set_puzzle(selected_puzzle)
-
+            set_selected_puzzle_bindings()
 
         },
         set_ephemeral_code(code: string) {
@@ -113,4 +125,38 @@ export function createPuzzleNavigate(): PuzzleNavigateStore {
 
     return [state, actions]
 
+}
+
+type VisualOutputNavigateState = {
+    visual: string | undefined
+}
+
+type VisualOutputNavigateActions = {
+    set_visual(visual?: Visual_CompositeNestedGraphRoot): void
+}
+
+type VisualOutputNavigateStore = [VisualOutputNavigateState, VisualOutputNavigateActions]
+
+
+
+export function createVisualOutputNavigate(): VisualOutputNavigateStore {
+
+    let [visual, set_visual] = createSignal<Visual_CompositeNestedGraphRoot | undefined>(undefined, { equals: false})
+
+    let state = {
+        get visual() {
+            let v = visual()
+            if (v) {
+                return visual_node_log(v)
+            }
+        }
+    }
+
+    let actions = {
+        set_visual(visual?: Visual_CompositeNestedGraphRoot) {
+            set_visual(visual)
+        }
+    }
+
+    return [state, actions]
 }
