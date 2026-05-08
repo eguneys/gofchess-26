@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor'
-import { onCleanup, onMount } from 'solid-js';
+import { createEffect, onCleanup, onMount } from 'solid-js';
 import { VimMode, initVimMode, type VimAdapterInstance } from 'monaco-vim'
 
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
@@ -17,7 +17,7 @@ self.MonacoEnvironment = {
     }
 }
 
-export default function GofEditor(props: { content?: string, on_content: (_: string) => void, on_command: (_: string) => void }) {
+export default function GofEditor(props: { vim_mode: boolean, content?: string, on_content: (_: string) => void, on_command: (_: string) => void }) {
 
     function getCurrentVimMode() {
         let statusNode = $status
@@ -87,8 +87,6 @@ export default function GofEditor(props: { content?: string, on_content: (_: str
             }
         })
 
-        vimMode = initVimMode(editor, $status)
-
         //VimMode.Vim.map('<C-j>', '<Enter>', 'insert')
 
         //@ts-ignore
@@ -100,9 +98,22 @@ export default function GofEditor(props: { content?: string, on_content: (_: str
             props.on_command('pass')
         })
 
+
+        createEffect(() => {
+            if (props.vim_mode) {
+                vimMode = initVimMode(editor, $status)
+            } else {
+                if (vimMode) {
+                    vimMode.dispose()
+                }
+            }
+        })
+
+
+
         onCleanup(() => {
             editor.dispose()
-            vimMode.dispose()
+            vimMode?.dispose()
         })
 
 
@@ -112,7 +123,6 @@ export default function GofEditor(props: { content?: string, on_content: (_: str
 
         setTimeout(() => editor.focus(), 0)
     })
-
     let $el!: HTMLDivElement
     let $status!: HTMLDivElement
 

@@ -9,6 +9,7 @@ import type { FEN } from "@lichess-org/chessground/types"
 export type State = {
     visual_state: VisualOutputNavigateState
     puzzle_state: PuzzleNavigateState
+    vim_mode_enabled: boolean
     code: string
     selected_puzzle_id: string
 }
@@ -19,6 +20,7 @@ export type Actions = {
     set_selected_puzzle_id: (_: string) => void
     set_ephemeral_code: (code: string) => void
     save_work: () => void
+    toggle_vim_mode: () => void
 }
 
 export type GofchessStore = [State, Actions]
@@ -27,6 +29,7 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
 
 
     let [store, set_store] = makePersisted(createStore({
+        vim_mode_enabled: false,
         code: '',
         selected_puzzle_id: ''
     }), { name: '.gofchess.store.v1'})
@@ -39,6 +42,9 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
     let state = {
         visual_state,
         puzzle_state,
+        get vim_mode_enabled() {
+            return store.vim_mode_enabled
+        },
         get code() {
             return store.code
         },
@@ -61,6 +67,9 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
     let actions = {
         visual_actions,
         puzzle_actions,
+        toggle_vim_mode() {
+            set_store('vim_mode_enabled', !store.vim_mode_enabled)
+        },
         set_selected_puzzle_id(id: string) {
             set_store('selected_puzzle_id', id)
 

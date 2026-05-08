@@ -9,8 +9,18 @@ import type { Color } from "hopefox";
 
 export default function SolvePage() {
 
+    const [{ gofchess_state }, { gofchess_actions: { toggle_vim_mode, save_work } }] = useState()
 
     return (<>
+        <div class='flex-1 flex mx-1 mt-0.5 gap-1'>
+            <button onClick={toggle_vim_mode} class={`p-1 text-lime-50 select-none cursor-pointer text-center rounded 
+            ${
+                gofchess_state.vim_mode_enabled ? 'bg-green-400 hover:bg-green-500 active:bg-green-600' : 'bg-slate-400 hover:bg-slate-500 active:bg-slate-600'
+                }`}>Vim Mode {gofchess_state.vim_mode_enabled?'Enabled': 'Disabled'} </button>
+
+            <button onClick={save_work} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-green-400 hover:bg-green-500 active:bg-green-600'>Save the script</button>
+        </div>
+
         <div class='flex-1 flex gap-1 p-0.5'>
             <div class='flex flex-1'>
                 <ChessboardGroup />
@@ -137,7 +147,7 @@ export function ChessboardGroup() {
         <div class='flex-1 flex flex-col lg:flex-row gap-0.5'>
             <div class='flex-8 flex flex-row bg-emerald-500 rounded border border-slate-500'>
                 <div class='relative flex flex-1 border-r border-dashed border-slate-100'>
-                    <GofEditor content={gofchess_state.code} on_content={set_ephemeral_code} on_command={on_command}/>
+                    <GofEditor vim_mode={gofchess_state.vim_mode_enabled} content={gofchess_state.code} on_content={set_ephemeral_code} on_command={on_command}/>
                     <Show when={state.compile_error}>
                         <div class='absolute bottom-0 right-0 bg-red-500 text-white p-2 border-2 border-dashed rounded'>
                             Compile Error
