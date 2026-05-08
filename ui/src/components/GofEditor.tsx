@@ -98,6 +98,9 @@ export default function GofEditor(props: { vim_mode: boolean, content?: string, 
             props.on_command('pass')
         })
 
+        createEffect(() => {
+            editor.setValue(props.content ?? '')
+        })
 
         createEffect(() => {
             if (props.vim_mode) {

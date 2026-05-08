@@ -9,16 +9,31 @@ import type { Color } from "hopefox";
 
 export default function SolvePage() {
 
-    const [{ gofchess_state }, { gofchess_actions: { toggle_vim_mode, save_work } }] = useState()
+    const [{ gofchess_state }, { gofchess_actions: { toggle_vim_mode, save_work, reset_to_help_script } }] = useState()
+
+    const [is_copied, set_is_copied] = createSignal(false)
+
+    const copy_text = () => {
+        navigator.clipboard.writeText(gofchess_state.code)
+
+        set_is_copied(true)
+        setTimeout(() => {
+            set_is_copied(false)
+        }, 1000)
+
+    }
 
     return (<>
         <div class='flex-1 flex mx-1 mt-0.5 gap-1'>
             <button onClick={toggle_vim_mode} class={`p-1 text-lime-50 select-none cursor-pointer text-center rounded 
             ${
-                gofchess_state.vim_mode_enabled ? 'bg-green-400 hover:bg-green-500 active:bg-green-600' : 'bg-slate-400 hover:bg-slate-500 active:bg-slate-600'
+                !gofchess_state.vim_mode_enabled ? 'bg-green-400 hover:bg-green-500 active:bg-green-600' : 'bg-slate-400 hover:bg-slate-500 active:bg-slate-600'
                 }`}>Vim Mode {gofchess_state.vim_mode_enabled?'Enabled': 'Disabled'} </button>
 
             <button onClick={save_work} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-green-400 hover:bg-green-500 active:bg-green-600'>Save the script</button>
+            <button onClick={copy_text} class='text-taupe-50 select-none cursor-pointer p-2 text-center rounded bg-taupe-400 hover:bg-taupe-500 active:bg-taupe-600'>{is_copied()?'Copied' : 'Copy Script'}</button>
+            <div class='flex-1'></div>
+            <button onClick={reset_to_help_script} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-red-400 hover:bg-red-500 active:bg-red-600'>Reset to help script ?</button>
         </div>
 
         <div class='flex-1 flex gap-1 p-0.5'>

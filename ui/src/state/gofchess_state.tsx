@@ -5,6 +5,7 @@ import { createSignal } from "solid-js"
 import type { Puzzle } from "./puzzles"
 import { Chess, INITIAL_FEN, parseFen, visual_node_log, type Color, type SAN, type Visual_CompositeNestedGraphRoot } from "hopefox"
 import type { FEN } from "@lichess-org/chessground/types"
+import Default_Help_Script from './default_help_script.gof?raw'
 
 export type State = {
     visual_state: VisualOutputNavigateState
@@ -21,6 +22,7 @@ export type Actions = {
     set_ephemeral_code: (code: string) => void
     save_work: () => void
     toggle_vim_mode: () => void
+    reset_to_help_script: () => void
 }
 
 export type GofchessStore = [State, Actions]
@@ -30,7 +32,7 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
 
     let [store, set_store] = makePersisted(createStore({
         vim_mode_enabled: false,
-        code: '',
+        code: Default_Help_Script,
         selected_puzzle_id: ''
     }), { name: '.gofchess.store.v1'})
     let [ephemeral_code, set_ephemeral_code] = createSignal(store.code)
@@ -67,6 +69,11 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
     let actions = {
         visual_actions,
         puzzle_actions,
+        reset_to_help_script() {
+            set_ephemeral_code(Default_Help_Script)
+            set_store('code', ephemeral_code())
+            worker_actions.reset_others_and_begin_on_code(store.code)
+        },
         toggle_vim_mode() {
             set_store('vim_mode_enabled', !store.vim_mode_enabled)
         },
