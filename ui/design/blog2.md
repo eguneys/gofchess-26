@@ -2,6 +2,8 @@
 
 If you haven't read the [Introductory Blog Post for GofChess](blog.md), please do so.
 
+Full Specification of the Language can be [found in here](https://github.com/eguneys/hopefox/tree/main#un-official-gofchess-language-specification-v100).
+
 GofChess is a language to express branching nature of chess tactics, using variable unification, and some composable builtin chess related logical primitives, and some nested tree-like structure.
 
 

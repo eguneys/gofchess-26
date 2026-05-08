@@ -5,8 +5,8 @@
   - [ ] Main Features
     - [ ] Navigate over solution lines + Mouse wheel
     - [x] Visual Output
-    - [ ] Optional Vim Mode
-    - [ ] Vim commands + UI buttons for various commands
+    - [x] Optional Vim Mode
+    - [x] Vim commands + UI buttons for various commands
     - [ ] Example .gof script
     - [ ] Documentation Cheatsheet
     - [ ] Close tabs - Restore to default
