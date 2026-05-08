@@ -3,12 +3,17 @@
 
 'Hello GofChess'
 
+
 'Introductory Blog Post: https://lichess.org/@/heroku/blog/farewell-banditchess--introducing-gofchess/LFtNkFP8'
 'Technical Blog Post: https://lichess.org/@/heroku/blog/gofchess--a-technical-dive-into-formalization-of-chess-tactics/KULHdYDn'
 
 'Language Specification: https://github.com/eguneys/hopefox/tree/main#un-official-gofchess-language-specification-v100'
 
 'You can enable Vim Mode and :w command will save your script'
+
+'Website README https://github.com/eguneys/gofchess-26#gofchesscom'
+
+'Good luck!'
 
 ###
 

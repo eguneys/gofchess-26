@@ -2,9 +2,9 @@
 
 ![Website Screenshot](ui/design/website_screenshot.jpg)
 
-GofChess (G of F of Chess) is a Chess Tactics Language. gofchess.com is the platform to experiment with it.
+GofChess (g of f of Chess) is a Chess Tactics Language. gofchess.com is the platform to experiment with it.
 
-GofChess is written in [Typescript](https://www.typescriptlang.org/) and relies on the [Solid.JS library](https://www.solidjs.com/).
+GofChess is written in [Typescript](https://www.typescriptlang.org/) and relies on the [SolidJS library](https://www.solidjs.com/).
 
 Currently there is no backend everything is run in an Offline-First Single Page Application.
 
