@@ -137,11 +137,6 @@ function do_work_in_puzzle(m: PositionManager, puzzle: Puzzle, compiled_fn: Comp
 
     let result = compare_coverage_result(visual, puzzle.sans)
 
-    if (puzzle.id === '004Ao') {
-        console.log(visual[0].data.call[0].witness)
-        debugger
-    }
-
     let coverage: PartialCoverage = {
         result,
         visual
