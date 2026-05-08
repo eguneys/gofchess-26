@@ -1,0 +1,1 @@
+import{t as e}from"./worker2-xqPd6jK5.js";var t=e(((e,t)=>{t.exports={}}));export default t();
