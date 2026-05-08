@@ -1,3 +1,20 @@
+===
+###
+
+'Hello GofChess'
+
+'Introductory Blog Post: https://lichess.org/@/heroku/blog/farewell-banditchess--introducing-gofchess/LFtNkFP8'
+'Technical Blog Post: https://lichess.org/@/heroku/blog/gofchess--a-technical-dive-into-formalization-of-chess-tactics/KULHdYDn'
+
+'Language Specification: https://github.com/eguneys/hopefox/tree/main#un-official-gofchess-language-specification-v100'
+
+'You can enable Vim Mode and :w command will save your script'
 
 ###
 
+if moves(queen, queen2) [win]
+
+###
+
+def moves(From, To)
+  move(From, To)

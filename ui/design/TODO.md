@@ -3,11 +3,11 @@
 - [x] Add Readme to Hopefox
 - [ ] Make the gofchess.com website functional
   - [ ] Main Features
-    - [ ] Navigate over solution lines + Mouse wheel
     - [x] Visual Output
     - [x] Optional Vim Mode
     - [x] Vim commands + UI buttons for various commands
     - [ ] Example .gof script
+    - [ ] Navigate over solution lines + Mouse wheel
     - [ ] Documentation Cheatsheet
     - [ ] Close tabs - Restore to default
   - [ ] Privacy Policy,  Terms of Service, About Pages
