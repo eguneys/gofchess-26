@@ -11,7 +11,7 @@
     - [ ] Documentation Cheatsheet
     - [ ] Close tabs - Restore to default
   - [ ] Privacy Policy,  Terms of Service, About Pages
-- [ ] Add Readme to gofchess.com website repository with screenshots of the features.
-- [ ] Release hopefox v1.0.0 with github tags
+- [x] Add Readme to gofchess.com website repository with screenshots of the features.
+- [x] Release hopefox v1.0.0 with github tags
 - [ ] Discuss for feedback
 - [ ] Publish blog posts, and spread the news
