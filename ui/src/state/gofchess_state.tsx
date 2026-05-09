@@ -24,6 +24,7 @@ export type Actions = {
     save_work: () => void
     toggle_vim_mode: () => void
     reset_to_help_script: () => void
+    reset_to_example_script: () => void
 }
 
 export type GofchessStore = [State, Actions]
