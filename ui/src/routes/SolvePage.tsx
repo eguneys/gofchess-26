@@ -9,7 +9,7 @@ import type { Color } from "hopefox";
 
 export default function SolvePage() {
 
-    const [{ gofchess_state }, { gofchess_actions: { toggle_vim_mode, save_work, reset_to_help_script } }] = useState()
+    const [{ gofchess_state }, { gofchess_actions: { toggle_vim_mode, save_work, reset_to_help_script, reset_to_example_script } }] = useState()
 
     const [is_copied, set_is_copied] = createSignal(false)
 
@@ -33,6 +33,7 @@ export default function SolvePage() {
             <button onClick={save_work} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-green-400 hover:bg-green-500 active:bg-green-600'>Save the script</button>
             <button onClick={copy_text} class='text-taupe-50 select-none cursor-pointer p-2 text-center rounded bg-taupe-400 hover:bg-taupe-500 active:bg-taupe-600'>{is_copied()?'Copied' : 'Copy Script'}</button>
             <div class='flex-1'></div>
+            <button onClick={reset_to_example_script} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-teal-400 hover:bg-teal-500 active:bg-teal-600'>Reset to example script.</button>
             <button onClick={reset_to_help_script} class='text-lime-50 select-none cursor-pointer p-2 text-center rounded bg-red-400 hover:bg-red-500 active:bg-red-600'>Reset to help script ?</button>
         </div>
 

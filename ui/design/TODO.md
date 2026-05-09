@@ -6,12 +6,12 @@
     - [x] Visual Output
     - [x] Optional Vim Mode
     - [x] Vim commands + UI buttons for various commands
-    - [ ] Example .gof script
+    - [x] Example .gof script
     - [ ] Navigate over solution lines + Mouse wheel
     - [ ] Documentation Cheatsheet
     - [ ] Close tabs - Restore to default
   - [ ] Privacy Policy,  Terms of Service, About Pages
-- [ ] Release hopefox v1.0.0 with github tags
 - [ ] Add Readme to gofchess.com website repository with screenshots of the features.
+- [ ] Release hopefox v1.0.0 with github tags
 - [ ] Discuss for feedback
 - [ ] Publish blog posts, and spread the news

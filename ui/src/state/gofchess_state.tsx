@@ -6,6 +6,7 @@ import type { Puzzle } from "./puzzles"
 import { Chess, INITIAL_FEN, parseFen, visual_node_log, type Color, type SAN, type Visual_CompositeNestedGraphRoot } from "hopefox"
 import type { FEN } from "@lichess-org/chessground/types"
 import Default_Help_Script from './default_help_script.gof?raw'
+import Default_Example_Script from './default_example_script.gof?raw'
 
 export type State = {
     visual_state: VisualOutputNavigateState
@@ -69,6 +70,11 @@ export function make_gofchess_store(worker_state: WorkerState, worker_actions: W
     let actions = {
         visual_actions,
         puzzle_actions,
+        reset_to_example_script() {
+            set_ephemeral_code(Default_Example_Script)
+            set_store('code', ephemeral_code())
+            worker_actions.reset_others_and_begin_on_code(store.code)
+        },
         reset_to_help_script() {
             set_ephemeral_code(Default_Help_Script)
             set_store('code', ephemeral_code())
